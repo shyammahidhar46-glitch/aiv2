@@ -1,7 +1,7 @@
 // ==========================================
 // 1. PASTE YOUR GOOGLE AI STUDIO API KEY HERE
 // ==========================================
-const GOOGLE_API_KEY = "AIzaSyC10rdcDHK1rtikJKmbsjMTMhl6CUBoROo"; 
+const GOOGLE_API_KEY = "AIzaSyARv6H6Iwh_J11zUXaMTVzNhFuaJXrksAU"; 
 // ==========================================
 
 
