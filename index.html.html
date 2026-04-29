@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura | Elite Health Tracker</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="loginPage" class="centered">
+        <div class="card fade-in">
+            <h1>Aura</h1>
+            <p class="subtitle">Your elite health companion.</p>
+            <input type="text" id="username" placeholder="Enter your name">
+            <button onclick="login()">Enter Sanctuary</button>
+        </div>
+    </div>
+
+    <div id="app" style="display: none; width: 100%; max-width: 600px; margin: 0 auto;">
+        
+        <div class="nav">
+            <button onclick="showSection('dashboard')" id="nav-dashboard" class="active">Daily</button>
+            <button onclick="showSection('nutrition')" id="nav-nutrition">Fuel</button>
+            <button onclick="showSection('analysis')" id="nav-analysis">Trends</button>
+            <button onclick="showSection('mind')" id="nav-mind">Mind</button>
+            <button onclick="showSection('workout')" id="nav-workout">Train</button>
+            <button onclick="showSection('insights')" id="nav-insights">AI</button>
+        </div>
+
+        <div class="header-container">
+            <h2 id="welcomeMessage" style="text-align: left; margin: 0;">Welcome</h2>
+            <button class="secondary btn-small" onclick="logout()">Sign Out</button>
+        </div>
+
+        <div id="dashboard" class="section card active-section">
+            <h1>Daily Progress</h1>
+            
+            <div class="metric-group">
+                <h3>Hydration</h3>
+                <div class="stat-display" id="waterDisplay">0 / 8 Glasses</div>
+                <button onclick="addWater()">Log a Glass</button>
+            </div>
+
+            <hr>
+
+            <div class="metric-group">
+                <h3>Movement</h3>
+                <div class="stat-display" id="stepsDisplay">0 Steps</div>
+                <div class="input-row">
+                    <input type="number" id="stepInput" placeholder="Add steps..." min="0">
+                    <button onclick="addSteps()">Add</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="nutrition" class="section card">
+            <h1>Nutrition Profile</h1>
+            
+            <div class="metric-group">
+                <h3>Calories</h3>
+                <div class="stat-display" id="caloriesDisplay">0 kcal</div>
+                <div class="input-row">
+                    <input type="number" id="calInput" placeholder="Add kcal..." min="0">
+                    <button onclick="addCalories()">Add</button>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="metric-group">
+                <h3>Protein</h3>
+                <div class="stat-display" id="proteinDisplay">0 g</div>
+                <div class="input-row">
+                    <input type="number" id="proteinInput" placeholder="Add grams..." min="0">
+                    <button onclick="addProtein()">Add</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="analysis" class="section card">
+            <h1>Performance Trends</h1>
+            <p class="subtitle">Weekly Steps vs. Caloric Intake</p>
+            <div class="chart-container">
+                <canvas id="trendChart"></canvas>
+            </div>
+        </div>
+
+        <div id="mind" class="section card">
+            <h1>Mental Clarity</h1>
+            <p class="subtitle" style="margin-bottom: 20px;">How are you feeling today?</p>
+            
+            <div class="mood-grid">
+                <button class="secondary mood-btn" onclick="setMood('Excellent')">Excellent</button>
+                <button class="secondary mood-btn" onclick="setMood('Good')">Good</button>
+                <button class="secondary mood-btn" onclick="setMood('Stressed')">Stressed</button>
+                <button class="secondary mood-btn" onclick="setMood('Exhausted')">Exhausted</button>
+            </div>
+            
+            <div style="margin-top: 20px; text-align: center;">
+                <span style="color: var(--text-muted);">Current Status: </span>
+                <strong id="moodDisplay" style="color: var(--gold);">None Logged</strong>
+            </div>
+        </div>
+
+        <div id="workout" class="section card">
+            <h1>Today's Training</h1>
+            <p class="subtitle" id="workoutDay">Loading regimen...</p>
+            
+            <ul class="workout-list" id="workoutList">
+                </ul>
+        </div>
+
+        <div id="insights" class="section card">
+            <h1>Aura AI</h1>
+            <p class="subtitle">Intelligent analysis of your metrics.</p>
+            
+            <div style="text-align: center; margin-bottom: 20px;">
+                <input type="password" id="apiKeyInput" placeholder="Paste Google AI Studio API Key here" style="margin-bottom: 10px;">
+                <button onclick="generateReport()" id="generateBtn">Analyze My Data</button>
+            </div>
+
+            <div id="aiLoading" style="display: none; text-align: center; color: var(--gold); margin: 20px 0;">
+                <em>Consulting the oracle... please wait.</em>
+            </div>
+
+            <div id="aiReportOutput" style="background: rgba(0,0,0,0.4); padding: 20px; border-radius: 8px; border: 1px dashed var(--border-subtle); display: none; line-height: 1.6; font-size: 0.95rem;">
+                </div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
