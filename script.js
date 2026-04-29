@@ -1,14 +1,17 @@
+// ==========================================
+// 1. PASTE YOUR GOOGLE AI STUDIO API KEY HERE
+// ==========================================
+const GOOGLE_API_KEY = "YOUR_API_KEY_HERE"; 
+// ==========================================
+
+
 let myChart = null;
 
 // =====================
 // DATA STATE
 // =====================
 const defaultData = {
-    water: 0,
-    steps: 0,
-    calories: 0,
-    protein: 0,
-    mood: 'None Logged',
+    water: 0, steps: 0, calories: 0, protein: 0, mood: 'None Logged',
     historySteps: [4500, 6200, 5800, 8100, 7500, 9200, 0], 
     historyCals: [2100, 2400, 2200, 2500, 2300, 2800, 0]
 };
@@ -54,6 +57,14 @@ function login(){
 function logout(){
     localStorage.removeItem("user"); 
     location.reload();
+}
+
+function wipeData() {
+    if (confirm("Are you sure you want to permanently delete all your health data? This cannot be undone.")) {
+        localStorage.removeItem("user");
+        localStorage.removeItem("auraHealthData");
+        location.reload();
+    }
 }
 
 function showSection(sectionId){
@@ -106,12 +117,22 @@ function updateUI() {
 // FEATURE FUNCTIONS
 // =====================
 function addWater() { userData.water += 1; saveData(); }
+function subWater() { if (userData.water > 0) { userData.water -= 1; saveData(); } }
 
 function addSteps() {
     const input = document.getElementById("stepInput");
     const val = parseInt(input.value);
     if(!isNaN(val) && val > 0) {
         userData.steps += val;
+        input.value = '';
+        saveData();
+    }
+}
+function subSteps() {
+    const input = document.getElementById("stepInput");
+    const val = parseInt(input.value);
+    if(!isNaN(val) && val > 0) {
+        userData.steps = Math.max(0, userData.steps - val);
         input.value = '';
         saveData();
     }
@@ -126,12 +147,30 @@ function addCalories() {
         saveData();
     }
 }
+function subCalories() {
+    const input = document.getElementById("calInput");
+    const val = parseInt(input.value);
+    if(!isNaN(val) && val > 0) {
+        userData.calories = Math.max(0, userData.calories - val);
+        input.value = '';
+        saveData();
+    }
+}
 
 function addProtein() {
     const input = document.getElementById("proteinInput");
     const val = parseInt(input.value);
     if(!isNaN(val) && val > 0) {
         userData.protein += val;
+        input.value = '';
+        saveData();
+    }
+}
+function subProtein() {
+    const input = document.getElementById("proteinInput");
+    const val = parseInt(input.value);
+    if(!isNaN(val) && val > 0) {
+        userData.protein = Math.max(0, userData.protein - val);
         input.value = '';
         saveData();
     }
@@ -144,8 +183,10 @@ function loadWorkout() {
     let routineKey = (day % 3) + 1; 
     let routineName = routineKey === 1 ? "Upper Body Focus" : (routineKey === 2 ? "Lower Body Power" : "Active Recovery");
     document.getElementById("workoutDay").innerText = routineName;
+
     const list = document.getElementById("workoutList");
     list.innerHTML = ""; 
+
     workouts[routineKey].forEach(exercise => {
         let li = document.createElement("li");
         li.innerText = exercise;
@@ -159,66 +200,33 @@ function loadWorkout() {
 function renderChart() {
     const ctx = document.getElementById('trendChart');
     if (myChart) myChart.destroy();
+
     myChart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Today'],
             datasets: [
                 {
-                    type: 'bar',
-                    label: 'Steps',
-                    data: userData.historySteps,
-                    backgroundColor: '#d4af37', 
-                    borderRadius: 6,
-                    yAxisID: 'y'
+                    type: 'bar', label: 'Steps', data: userData.historySteps,
+                    backgroundColor: '#d4af37', borderRadius: 6, yAxisID: 'y'
                 },
                 {
-                    type: 'line',
-                    label: 'Calories',
-                    data: userData.historyCals,
-                    borderColor: '#fdfdfd', 
-                    borderWidth: 2,
-                    tension: 0.4,
-                    pointBackgroundColor: '#070708',
-                    pointBorderColor: '#fdfdfd',
-                    yAxisID: 'y1'
+                    type: 'line', label: 'Calories', data: userData.historyCals,
+                    borderColor: '#fdfdfd', borderWidth: 2, tension: 0.4,
+                    pointBackgroundColor: '#070708', pointBorderColor: '#fdfdfd', yAxisID: 'y1'
                 }
             ]
         },
         options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            interaction: { mode: 'index', intersect: false },
+            responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
             plugins: {
                 legend: { labels: { color: '#8e8e93', font: { family: 'Montserrat' } } },
-                tooltip: {
-                    backgroundColor: 'rgba(18, 18, 20, 0.9)',
-                    titleColor: '#d4af37',
-                    bodyColor: '#fdfdfd',
-                    borderColor: 'rgba(212, 175, 55, 0.3)',
-                    borderWidth: 1,
-                    padding: 10
-                }
+                tooltip: { backgroundColor: 'rgba(18, 18, 20, 0.9)', titleColor: '#d4af37', bodyColor: '#fdfdfd', borderColor: 'rgba(212, 175, 55, 0.3)', borderWidth: 1, padding: 10 }
             },
             scales: {
-                x: {
-                    grid: { display: false },
-                    ticks: { color: '#8e8e93', font: { family: 'Montserrat' } }
-                },
-                y: {
-                    type: 'linear',
-                    display: true,
-                    position: 'left',
-                    grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                    ticks: { color: '#d4af37' } 
-                },
-                y1: {
-                    type: 'linear',
-                    display: true,
-                    position: 'right',
-                    grid: { display: false },
-                    ticks: { color: '#fdfdfd' } 
-                }
+                x: { grid: { display: false }, ticks: { color: '#8e8e93', font: { family: 'Montserrat' } } },
+                y: { type: 'linear', display: true, position: 'left', grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#d4af37' } },
+                y1: { type: 'linear', display: true, position: 'right', grid: { display: false }, ticks: { color: '#fdfdfd' } }
             }
         }
     });
@@ -228,14 +236,13 @@ function renderChart() {
 // GOOGLE AI INTEGRATION
 // =====================
 async function generateReport() {
-    const apiKey = document.getElementById("apiKeyInput").value.trim();
     const outputDiv = document.getElementById("aiReportOutput");
     const loadingDiv = document.getElementById("aiLoading");
     const generateBtn = document.getElementById("generateBtn");
 
-    if (!apiKey) {
-        alert("Please enter your Google API key to generate a report.");
-        return;
+    if (GOOGLE_API_KEY === "AIzaSyC10rdcDHK1rtikJKmbsjMTMhl6CUBoROo" || !GOOGLE_API_KEY) { 
+        alert("Error: You need to paste your API key at the top of the script.js file."); 
+        return; 
     }
 
     outputDiv.style.display = "none";
@@ -255,19 +262,13 @@ async function generateReport() {
     Format the response clearly with short headings. Do not use markdown like asterisks, just use capital letters for emphasis if needed. Keep it under 150 words. Be direct and realistic.
     `;
 
-    // UPDATED: Now pointing to gemini-2.5-flash
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GOOGLE_API_KEY}`;
     
-    const requestBody = {
-        contents: [{
-            parts: [{ text: promptText }]
-        }]
-    };
+    const requestBody = { contents: [{ parts: [{ text: promptText }] }] };
 
     try {
         const response = await fetch(endpoint, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+            method: "POST", headers: { "Content-Type": "application/json" },
             body: JSON.stringify(requestBody)
         });
 
@@ -276,8 +277,7 @@ async function generateReport() {
         const data = await response.json();
         let aiText = data.candidates[0].content.parts[0].text;
         
-        aiText = aiText.replace(/\*\*/g, '').replace(/\*/g, '');
-        outputDiv.innerHTML = aiText.replace(/\n/g, '<br>'); 
+        outputDiv.innerHTML = aiText.replace(/\*\*/g, '').replace(/\*/g, '').replace(/\n/g, '<br>'); 
         outputDiv.style.display = "block";
 
     } catch (error) {
